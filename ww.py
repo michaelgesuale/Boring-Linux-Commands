@@ -445,7 +445,7 @@ class Monster(Actor):
         if self.is_dead():
             self._stage.remove_actor(self)
         if self._is_stuck:
-            return False
+            return
         self.move(self, self._dx, self._dy)
         return True
 
@@ -463,7 +463,6 @@ class Monster(Actor):
             return False
 
         bounce_off_edge = False
-        stick_to_box = False
 
         new_x = self._x + self._dx
         new_y = self._y + self._dy
@@ -494,6 +493,7 @@ class Monster(Actor):
             if isinstance(item, StickyBox):
                 item._stuck.append(self)
                 self._is_stuck == True
+                return False
             self._dx =- self._dx
             self._dy =- self._dy
             bounce_off_edge=True
