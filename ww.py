@@ -265,6 +265,13 @@ class StickyBox(Box):
 
     def stick_monster_to_box(self, monster):
         self._stuck.append(monster)
+
+    def move(self, other, dx, dy):
+        if Box.move(self, other, dx, dy):
+            while self._stuck != []:
+                self._stuck.pop()
+            return True
+        return False
         
         
 class Stage:
@@ -426,6 +433,7 @@ class Monster(Actor):
         Actor.__init__(self, icon_file, stage, x, y, delay)
         self._dx = 1
         self._dy = 1
+        self._is_stuck = False
 
     def step(self):
         '''
@@ -436,6 +444,8 @@ class Monster(Actor):
         if not self.delay(): return 
         if self.is_dead():
             self._stage.remove_actor(self)
+        if self._is_stuck:
+            return False
         self.move(self, self._dx, self._dy)
         return True
 
@@ -481,6 +491,9 @@ class Monster(Actor):
             item = self._stage.get_actor(new_x, new_y)
             if isinstance(item, Player):
                 item._stage.remove_player()
+            if isinstance(item, StickyBox):
+                item._stuck.append(self)
+                self._is_stuck == True
             self._dx =- self._dx
             self._dy =- self._dy
             bounce_off_edge=True
@@ -495,7 +508,7 @@ class Monster(Actor):
         Return whether this Monster has died.
         That is, if self is surrounded on all sides, by either Boxes or
         other Monsters.'''
-
+        
         for dx in range(-1, 2):
             for dy in range(-1, 2):
                 new_x = self._x + dx
@@ -507,3 +520,18 @@ class Monster(Actor):
                     return False
 
         return True
+
+##    def is_stuck(self):
+##        '''
+##        Return whether this Monster is stuck to a StickyBox
+##        '''
+##
+##        for dx in range(-1, 2):
+##            for dy in range(-1, 2):
+##                new_x = self._x + dx
+##                new_y = self._y + dy
+##                surrounding_actor = self._stage.get_actor(new_x, new_y)
+##                if isinstance(surrounding_actor, StickyBox):
+##                    return True
+##
+##        return False 

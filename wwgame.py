@@ -9,14 +9,22 @@ ww.add_actor(Monster("icons/face-devil-grin-24.png", ww, 7, 4, 5))
 ww.add_actor(Monster("icons/face-devil-grin-24.png", ww, 4, 10, 3))
 ww.add_actor(Monster("icons/face-devil-grin-24.png", ww, 5, 20, 2))
 
-# Places 99 boxes in random positions on the stage
+# Places 100 boxes in random positions on the stage
 num_boxes=0
-while num_boxes<100:
+while num_boxes<90:
     x=random.randrange(ww.get_width())
     y=random.randrange(ww.get_height())
     if ww.get_actor(x,y) is None:
         ww.add_actor(Box("icons/emblem-package-2-24.png", ww, x, y))
         num_boxes+=1
+
+num_sticky_boxes=0
+while num_sticky_boxes<10:
+    x=random.randrange(ww.get_width())
+    y=random.randrange(ww.get_height())
+    if ww.get_actor(x,y) is None:
+        ww.add_actor(StickyBox("icons/happy-package-2-24.jpg", ww, x, y))
+        num_sticky_boxes+=1
         
 ww.add_actor(Wall("icons/wall.jpg", ww, 4, 3))
 ww.add_actor(Wall("icons/wall.jpg", ww, 5, 3))
