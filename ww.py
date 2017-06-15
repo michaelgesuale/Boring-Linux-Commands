@@ -434,6 +434,8 @@ class Monster(Actor):
         '''
         
         if not self.delay(): return 
+        if self.is_dead():
+            self._stage.remove_actor(self)
         self.move(self, self._dx, self._dy)
         return True
 
@@ -455,9 +457,6 @@ class Monster(Actor):
 
         new_x = self._x + self._dx
         new_y = self._y + self._dy
-
-        if self.is_dead():
-            self._stage.remove_actor(self)
 
         if not self._stage.is_in_bounds_x(new_x): 
             self._dx =- self._dx
