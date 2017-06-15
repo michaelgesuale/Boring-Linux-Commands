@@ -456,6 +456,9 @@ class Monster(Actor):
         new_x = self._x + self._dx
         new_y = self._y + self._dy
 
+        if self.is_dead():
+            self._stage.remove_actor(self)
+
         if not self._stage.is_in_bounds_x(new_x): 
             self._dx =- self._dx
             bounce_off_edge=True
@@ -494,39 +497,15 @@ class Monster(Actor):
         That is, if self is surrounded on all sides, by either Boxes or
         other Monsters.'''
 
-        # TODO: This is part of the assignment and not yet required for the lab.
-        # If you have extra time in lab, feel free to get working on this.
-
-##        if not Actor.is_dead(self):
-##            for x in range(-1,2): 
-##                for y in range(-1,2):
-##
-##                    around = self._stage.get_actor(self._x+x, self._y+y)              
-##                    if(self._stage.is_in_bounds(self._x+x,self._y+y) \
-##                       and (around == None or isinstance(around,  \
-##                                                         Player))):
-##                        return False
-##                    
-##        self._stage.remove_player()
-##        return True
-
-## THIS DOESN'T WORK EITHER, but could be a good start
-##        for x in range(-1, 2):
-##            for y in range(-1, 2):
-##                new_position = self.move(self, self._x + x, self._y + y)
-##                if new_position.get_position() == self._stage.get_actor(self._x, self._y):
-##                    self._stage.remove_player()
-##                    return True
-
-        for x in range(-1, 2):
-            for y in range(-1, 2):
-                new_x = self._x + x
-                new_y = self._y + y
-                surrounding_actor = self._stage.get_actor(new_x, new_y)
-                if self._stage.is_in_bounds(new_x, new_y) \
-                   and (not surrounding_actor or isinstance(surrounding_actor, Player)):
-                    return False
+        if not Actor.is_dead(self):
+            for x in range(-1, 2):
+                for y in range(-1, 2):
+                    new_x = self._x + x
+                    new_y = self._y + y
+                    surrounding_actor = self._stage.get_actor(new_x, new_y)
+                    if self._stage.is_in_bounds(new_x, new_y) \
+                       and (not surrounding_actor or \
+                            isinstance(surrounding_actor, Player)):
+                        return False
                     
-        self._is_dead = True
-        self._stage.remove_actor(self)
         return True
