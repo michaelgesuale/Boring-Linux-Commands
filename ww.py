@@ -497,15 +497,14 @@ class Monster(Actor):
         That is, if self is surrounded on all sides, by either Boxes or
         other Monsters.'''
 
-        if not Actor.is_dead(self):
-            for x in range(-1, 2):
-                for y in range(-1, 2):
-                    new_x = self._x + x
-                    new_y = self._y + y
-                    surrounding_actor = self._stage.get_actor(new_x, new_y)
-                    if self._stage.is_in_bounds(new_x, new_y) \
-                       and (not surrounding_actor or \
-                            isinstance(surrounding_actor, Player)):
-                        return False
-                    
+        for dx in range(-1, 2):
+            for dy in range(-1, 2):
+                new_x = self._x + dx
+                new_y = self._y + dy
+                surrounding_actor = self._stage.get_actor(new_x, new_y)
+                if self._stage.is_in_bounds(new_x, new_y) \
+                   and (not surrounding_actor or \
+                        isinstance(surrounding_actor, Player)):
+                    return False
+
         return True
