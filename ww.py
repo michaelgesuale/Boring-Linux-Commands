@@ -530,3 +530,33 @@ class Monster(Actor):
                     return False
 
         return True
+    
+class ExplosiveMonster(Monster):
+
+    def step(self):
+        '''
+        Take one step in the animation (this Monster moves by one space).
+        If it's being delayed, return None. Else, return True.
+        '''
+        
+        if not self.delay(): return 
+        if self.is_dead():
+            self.remove_boxes()
+            self._stage.remove_actor(self)
+        if self._is_stuck:
+            return
+        self.move(self, self._dx, self._dy)
+        return True
+
+    def remove_boxes(self):
+        '''
+        Removes all surrounding boxes when ExplosiveMonster dies.
+        '''
+        for dx in range(-1, 2):
+            for dy in range(-1, 2):
+                new_x = self._x + dx
+                new_y = self._y + dy
+                surrounding_actor = self._stage.get_actor(new_x, new_y)
+                if self._stage.is_in_bounds(new_x, new_y) and \
+        isinstance(surrounding_actor, Box):
+                    self._stage.remove_actor(surrounding_actor)
