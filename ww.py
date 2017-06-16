@@ -530,18 +530,3 @@ class Monster(Actor):
                     return False
 
         return True
-
-##    def is_stuck(self):
-##        '''
-##        Return whether this Monster is stuck to a StickyBox
-##        '''
-##
-##        for dx in range(-1, 2):
-##            for dy in range(-1, 2):
-##                new_x = self._x + dx
-##                new_y = self._y + dy
-##                surrounding_actor = self._stage.get_actor(new_x, new_y)
-##                if isinstance(surrounding_actor, StickyBox):
-##                    return True
-##
-##        return False 
