@@ -148,16 +148,26 @@ class KeyboardPlayer(Player):
 
         if self._last_event is not None:
             dx, dy = None, None
-            if self._last_event == pygame.K_DOWN:
-                dx, dy = 0,1
-            if self._last_event == pygame.K_LEFT:
-                dx, dy = -1,0
-            if self._last_event == pygame.K_RIGHT:
-                dx, dy = 1,0
-            if self._last_event == pygame.K_UP:
-                dx, dy = 0,-1
+            if self._last_event == pygame.K_s:
+                dx, dy = 0, 1
+            if self._last_event == pygame.K_a:
+                dx, dy = -1, 0
+            if self._last_event == pygame.K_d:
+                dx, dy = 1, 0
+            if self._last_event == pygame.K_w:
+                dx, dy = 0, -1
+            if self._last_event == pygame.K_c:
+                dx, dy = 1, 1
+            if self._last_event == pygame.K_q:
+                dx, dy = -1, -1
+            if self._last_event == pygame.K_z:
+                dx, dy = -1, 1
+            if self._last_event == pygame.K_e:
+                dx, dy = 1, -1
+            #keys_pressed = key.get_pressed()
+            #if keys_pressed[K_s]:
             if dx is not None and dy is not None:
-                self.move(self, dx, dy) # we are asking ourself to move
+                self.move(self, dx, dy)  # we are asking ourself to move
 
             self._last_event = None
 
