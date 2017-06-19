@@ -1,6 +1,7 @@
 import pygame
 import sys
 import time
+import random
 
 class Actor:
     '''
@@ -594,12 +595,42 @@ class ExplosiveMonster(Monster):
 
 class DisguisedMonster(Monster):
     '''This monster is is treated as a monster, but looks like a wall'''
+    pass
 
-
-def timer(time=500000000000):
-    x = 0
-    while x < time:
-        time.sleep(60)
-        x+=1
-        if x == time:
-            sys.exit()
+class AddBoxesMonster(Monster):
+    
+    def step(self):
+        '''
+        Take one step in the animation (this Monster moves by one space).
+        If it's being delayed, return None. Else, return True.
+        '''
+            
+        if not self.delay(): return 
+        if self.is_dead():
+            self.add_boxes()
+            self._stage.remove_actor(self)
+        if self._is_stuck:
+            return
+        self.move(self, self._dx, self._dy)
+        return True
+    
+    def add_boxes(self):
+        '''
+        Adds boxes in random locations when AddBoxesMonster dies.
+        '''
+        num_extra_boxes = 0
+        while num_extra_boxes < 5:
+            x=random.randrange(self._stage.get_width())
+            y=random.randrange(self._stage.get_height())
+            if self._stage.get_actor(x, y) is None:
+                self._stage.add_actor(Box('icons/emblem-package-2-24.png', \
+                                          self._stage, x, y))
+                num_extra_boxes += 1
+                
+##def timer(time=500000000000):
+##    x = 0
+##    while x < time:
+##        time.sleep(60)
+##        x+=1
+##        if x == time:
+##            sys.exit()

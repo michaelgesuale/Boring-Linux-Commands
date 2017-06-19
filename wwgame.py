@@ -6,7 +6,7 @@ ww=Stage(20, 20, 24)
 ww.set_player(KeyboardPlayer("icons/face-cool-24.png", ww))
 ww.add_actor(Monster("icons/face-devil-grin-24.png", ww, 0, 3, 1))
 ww.add_actor(Monster("icons/face-devil-grin-24.png", ww, 7, 4, 5))
-ww.add_actor(Monster("icons/face-devil-grin-24.png", ww, 4, 10, 3))
+ww.add_actor(AddBoxesMonster("icons/face-devil-grin-24.png", ww, 4, 10, 3))
 ww.add_actor(ExplosiveMonster("icons/explosive-monster.png", ww, 5, 20, 2))
 
 # Places 100 boxes in random positions on the stage
