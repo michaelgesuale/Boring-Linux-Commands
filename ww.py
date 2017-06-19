@@ -413,12 +413,13 @@ class Stage:
         Remove the Player from the Stage.
         '''
         
-        if isinstance(player_n, KeyboardPlayer):
+        if isinstance(player_n, KeyboardPlayer) and \
+           not isinstance(player_n, KeyboardPlayer2):
             self.remove_actor(self._player)
             self._player=None
 
         if isinstance(player_n, KeyboardPlayer2):
-            self.remove_actor(self._player)
+            self.remove_actor(self._player2)
             self._player2 = None
 
     def player_event(self, event):
