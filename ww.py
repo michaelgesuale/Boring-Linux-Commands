@@ -27,6 +27,7 @@ class Actor:
         # actors speed. See the delay method.
         self._delay = delay
         self._delay_count = 0
+        self._is_dead = False
     
     def set_position(self, x, y):
         '''
@@ -103,7 +104,7 @@ class Player(Actor):
     from the user, for example, key presses etc.
     '''
 
-    def __init__(self, icon_file, stage, x=0, y=0, number = 1):
+    def __init__(self, icon_file, stage, x=0, y=0):
         '''
         (Player, str, Stage, int, int) -> None
         Construct a Player with given image, on the given stage, at
@@ -112,7 +113,6 @@ class Player(Actor):
         
         Actor.__init__(self, icon_file, stage, x, y)
         # Identify whether player 1 or 2
-        self._number = number
     
     def handle_event(self, event):
         '''
@@ -126,13 +126,13 @@ class KeyboardPlayer(Player):
     A KeyboardPlayer is a Player that can handle keypress events.
     '''
     
-    def __init__(self, icon_file, stage, x=0, y=0, number = 1):
+    def __init__(self, icon_file, stage, x=0, y=0):
         '''
         Construct a KeyboardPlayer. Other than the given Player information,
         a KeyboardPlayer also keeps track of the last key event that took place.
         '''
         
-        Player.__init__(self, icon_file, stage, x, y, number)
+        Player.__init__(self, icon_file, stage, x, y)
         self._last_event = None # we are only interested in the last event
     
     def handle_event(self, event):
@@ -154,41 +154,22 @@ class KeyboardPlayer(Player):
         if self._last_event is not None:
             dx, dy = None, None
 
-            if self._number == 1:
-                if self._last_event == pygame.K_s:
-                    dx, dy = 0, 1
-                if self._last_event == pygame.K_a:
-                    dx, dy = -1, 0
-                if self._last_event == pygame.K_d:
-                    dx, dy = 1, 0
-                if self._last_event == pygame.K_w:
-                    dx, dy = 0, -1
-                if self._last_event == pygame.K_c:
-                    dx, dy = 1, 1
-                if self._last_event == pygame.K_q:
-                    dx, dy = -1, -1
-                if self._last_event == pygame.K_z:
-                    dx, dy = -1, 1
-                if self._last_event == pygame.K_e:
-                    dx, dy = 1, -1
-                    
-            if self._number == 2:
-                if self._last_event == pygame.K_k:
-                    dx, dy = 0, 1
-                if self._last_event == pygame.K_j:
-                    dx, dy = -1, 0
-                if self._last_event == pygame.K_l:
-                    dx, dy = 1, 0
-                if self._last_event == pygame.K_i:
-                    dx, dy = 0, -1
-                if self._last_event == pygame.K_PERIOD:
-                    dx, dy = 1, 1
-                if self._last_event == pygame.K_u:
-                    dx, dy = -1, -1
-                if self._last_event == pygame.K_m:
-                    dx, dy = -1, 1
-                if self._last_event == pygame.K_o:
-                    dx, dy = 1, -1
+            if self._last_event == pygame.K_s:
+                dx, dy = 0, 1
+            if self._last_event == pygame.K_a:
+                dx, dy = -1, 0
+            if self._last_event == pygame.K_d:
+                dx, dy = 1, 0
+            if self._last_event == pygame.K_w:
+                dx, dy = 0, -1
+            if self._last_event == pygame.K_c:
+                dx, dy = 1, 1
+            if self._last_event == pygame.K_q:
+                dx, dy = -1, -1
+            if self._last_event == pygame.K_z:
+                dx, dy = -1, 1
+            if self._last_event == pygame.K_e:
+                dx, dy = 1, -1
                 
             #keys_pressed = key.get_pressed()
             #if keys_pressed[K_s]:
@@ -226,7 +207,8 @@ class KeyboardPlayer(Player):
                 item = self._stage.get_actor(new_x, new_y)
                 # Kill player if Monster asks it to move
                 if isinstance(item, Monster):
-                    item._stage.remove_player()
+                    self._is_dead = True
+                    item._stage.remove_player(self)
                     return False
                 item.move(other, dx, dy)
                 if not self._stage.get_actor(new_x, new_y):
@@ -234,7 +216,44 @@ class KeyboardPlayer(Player):
                     return True
                 
         return False
-        
+
+class KeyboardPlayer2(KeyboardPlayer):
+
+    def step(self):
+        '''
+        (KeyboardPlayer) -> None
+        Take a single step in the animation. 
+        For example: if the user asked us to move right, then we do that.
+        '''
+
+        if self._last_event is not None:
+            dx, dy = None, None
+
+            if self._last_event == pygame.K_k:
+                dx, dy = 0, 1
+            if self._last_event == pygame.K_j:
+                dx, dy = -1, 0
+            if self._last_event == pygame.K_l:
+                dx, dy = 1, 0
+            if self._last_event == pygame.K_i:
+                dx, dy = 0, -1
+            if self._last_event == pygame.K_PERIOD:
+                dx, dy = 1, 1
+            if self._last_event == pygame.K_u:
+                dx, dy = -1, -1
+            if self._last_event == pygame.K_m:
+                dx, dy = -1, 1
+            if self._last_event == pygame.K_o:
+                dx, dy = 1, -1
+                
+            #keys_pressed = key.get_pressed()
+            #if keys_pressed[K_s]:
+                
+            if dx is not None and dy is not None:
+                self.move(self, dx, dy)  # we are asking ourself to move
+
+            self._last_event = None
+                    
 class Box(Actor):
     '''
     A Box Actor.
@@ -321,6 +340,7 @@ class Stage:
         
         self._actors = [] # all actors on this stage (monsters, player, boxes, ...)
         self._player = None # a special actor, the player
+        self._player2 = None # second player
 
         # the logical width and height of the stage
         self._width, self._height = width, height
@@ -373,33 +393,51 @@ class Stage:
         
         return self._height
 
-    def set_player(self, player):
+    def set_player(self, player, player2 = None):
         '''
         (Stage, Player) -> None
         A Player is a special actor, store a reference to this Player in the attribute
         self._player, and add the Player to the list of Actors.
         '''
         
-        self._player=player
+        self._player = player
         self.add_actor(self._player)
 
-    def remove_player(self):
+        self._player2 = player2
+        if player2 is not None:
+            self.add_actor(self._player2)
+
+    def remove_player(self, player_n):
         '''
         (Stage) -> None
         Remove the Player from the Stage.
         '''
         
-        self.remove_actor(self._player)
-        self._player=None
+        if isinstance(player_n, KeyboardPlayer):
+            self.remove_actor(self._player)
+            self._player=None
+
+        if isinstance(player_n, KeyboardPlayer2):
+            self.remove_actor(self._player)
+            self._player2 = None
 
     def player_event(self, event):
         '''
         (Stage, int) -> None
         Send a user event to the player (this is a special Actor).
         '''
-        
-        self._player.handle_event(event)
+        keys_p1 = [pygame.K_s, pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_c, \
+                   pygame.K_q, pygame.K_z, pygame.K_e]
 
+        keys_p2 = [pygame.K_k, pygame.K_j, pygame.K_l, pygame.K_i, pygame.K_o, \
+                   pygame.K_u, pygame.K_m, pygame.K_PERIOD]
+        
+        if self._player is not None and event in keys_p1:
+            self._player.handle_event(event)
+
+        elif self._player2 is not None and event in keys_p2:
+            self._player2.handle_event(event)
+            
     def add_actor(self, actor):
         '''
         (Stage, Actor) -> None
@@ -526,7 +564,8 @@ class Monster(Actor):
         if self._stage.get_actor(new_x, new_y):
             item = self._stage.get_actor(new_x, new_y)
             if isinstance(item, Player):
-                item._stage.remove_player()
+                item._is_dead = True
+                item._stage.remove_player(item)
             if isinstance(item, StickyBox):
                 item._stuck.append(self)
                 self._is_stuck == True

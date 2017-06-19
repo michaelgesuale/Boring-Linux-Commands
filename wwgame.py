@@ -2,13 +2,36 @@ import sys, pygame, random
 from ww import *
 pygame.init()
 
+screen = pygame.display.set_mode((500, 500))
+StartScreen = pygame.image.load("icons/start_screen.jpg")
+player = 0
+
+while player == 0:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT: sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_1:
+                player = 1
+            if event.key == pygame.K_2:
+                player = 2
+    screen.blit(StartScreen, (0,0))
+    pygame.display.flip()
+
+
 ww=Stage(20, 20, 24)
-ww.set_player(KeyboardPlayer("icons/face-cool-24.png", ww))
+#ww.set_player(KeyboardPlayer("icons/face-cool-24.png", ww))
 ww.add_actor(Monster("icons/face-devil-grin-24.png", ww, 0, 3, 1))
 ww.add_actor(KingMonster("icons/king-monster.png", ww, 7, 4, 5))
 ww.add_actor(AddBoxesMonster("icons/add-boxes-monster.png", ww, 4, 10, 3))
 ww.add_actor(ExplosiveMonster("icons/explosive-monster.png", ww, 5, 20, 2))
 
+if player == 2:
+##    ww.set_player(KeyboardPlayer2("icons/player-2.png", ww, 19, 0))
+##    ww.set_player(KeyboardPlayer("icons/face-cool-24.png", ww))
+    ww.set_player(KeyboardPlayer("icons/face-cool-24.png", ww), \
+                  KeyboardPlayer2("icons/player-2.png", ww, 19, 0))
+if player == 1:
+    ww.set_player(KeyboardPlayer("icons/face-cool-24.png", ww))
 # Places 100 boxes in random positions on the stage
 num_boxes=0
 while num_boxes<90:
