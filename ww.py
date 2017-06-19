@@ -1,4 +1,6 @@
 import pygame
+import sys
+import time
 
 class Actor:
     '''
@@ -100,7 +102,7 @@ class Player(Actor):
     from the user, for example, key presses etc.
     '''
 
-    def __init__(self, icon_file, stage, x=0, y=0):
+    def __init__(self, icon_file, stage, x=0, y=0, number = 1):
         '''
         (Player, str, Stage, int, int) -> None
         Construct a Player with given image, on the given stage, at
@@ -108,6 +110,8 @@ class Player(Actor):
         '''
         
         Actor.__init__(self, icon_file, stage, x, y)
+        # Identify whether player 1 or 2
+        self._number = number
     
     def handle_event(self, event):
         '''
@@ -121,13 +125,13 @@ class KeyboardPlayer(Player):
     A KeyboardPlayer is a Player that can handle keypress events.
     '''
     
-    def __init__(self, icon_file, stage, x=0, y=0):
+    def __init__(self, icon_file, stage, x=0, y=0, number = 1):
         '''
         Construct a KeyboardPlayer. Other than the given Player information,
         a KeyboardPlayer also keeps track of the last key event that took place.
         '''
         
-        Player.__init__(self, icon_file, stage, x, y)
+        Player.__init__(self, icon_file, stage, x, y, number)
         self._last_event = None # we are only interested in the last event
     
     def handle_event(self, event):
@@ -148,24 +152,46 @@ class KeyboardPlayer(Player):
 
         if self._last_event is not None:
             dx, dy = None, None
-            if self._last_event == pygame.K_s:
-                dx, dy = 0, 1
-            if self._last_event == pygame.K_a:
-                dx, dy = -1, 0
-            if self._last_event == pygame.K_d:
-                dx, dy = 1, 0
-            if self._last_event == pygame.K_w:
-                dx, dy = 0, -1
-            if self._last_event == pygame.K_c:
-                dx, dy = 1, 1
-            if self._last_event == pygame.K_q:
-                dx, dy = -1, -1
-            if self._last_event == pygame.K_z:
-                dx, dy = -1, 1
-            if self._last_event == pygame.K_e:
-                dx, dy = 1, -1
+
+            if self._number == 1:
+                if self._last_event == pygame.K_s:
+                    dx, dy = 0, 1
+                if self._last_event == pygame.K_a:
+                    dx, dy = -1, 0
+                if self._last_event == pygame.K_d:
+                    dx, dy = 1, 0
+                if self._last_event == pygame.K_w:
+                    dx, dy = 0, -1
+                if self._last_event == pygame.K_c:
+                    dx, dy = 1, 1
+                if self._last_event == pygame.K_q:
+                    dx, dy = -1, -1
+                if self._last_event == pygame.K_z:
+                    dx, dy = -1, 1
+                if self._last_event == pygame.K_e:
+                    dx, dy = 1, -1
+                    
+            if self._number == 2:
+                if self._last_event == pygame.K_k:
+                    dx, dy = 0, 1
+                if self._last_event == pygame.K_j:
+                    dx, dy = -1, 0
+                if self._last_event == pygame.K_l:
+                    dx, dy = 1, 0
+                if self._last_event == pygame.K_i:
+                    dx, dy = 0, -1
+                if self._last_event == pygame.K_PERIOD:
+                    dx, dy = 1, 1
+                if self._last_event == pygame.K_u:
+                    dx, dy = -1, -1
+                if self._last_event == pygame.K_m:
+                    dx, dy = -1, 1
+                if self._last_event == pygame.K_o:
+                    dx, dy = 1, -1
+                
             #keys_pressed = key.get_pressed()
             #if keys_pressed[K_s]:
+                
             if dx is not None and dy is not None:
                 self.move(self, dx, dy)  # we are asking ourself to move
 
@@ -531,6 +557,11 @@ class Monster(Actor):
 
         return True
     
+class KingMonster(Monster):
+
+    def is_dead(self):
+        pass
+
 class ExplosiveMonster(Monster):
 
     def step(self):
@@ -560,3 +591,15 @@ class ExplosiveMonster(Monster):
                 if self._stage.is_in_bounds(new_x, new_y) and \
         isinstance(surrounding_actor, Box):
                     self._stage.remove_actor(surrounding_actor)
+
+class DisguisedMonster(Monster):
+    '''This monster is is treated as a monster, but looks like a wall'''
+
+
+def timer(time=500000000000):
+    x = 0
+    while x < time:
+        time.sleep(60)
+        x+=1
+        if x == time:
+            sys.exit()

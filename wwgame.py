@@ -44,4 +44,3 @@ while True:
                 ww.player_event(event.key)
     ww.step()
     ww.draw()
-    
