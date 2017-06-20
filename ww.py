@@ -357,6 +357,9 @@ class Stage:
         # get a screen of the appropriate dimension to draw on
         self._screen = pygame.display.set_mode(self._pixel_size)
 
+        # did we win?
+        self._winner = False
+
     def is_in_bounds(self, x, y):
         '''
         (Stage, int, int) -> bool
@@ -502,6 +505,28 @@ class Stage:
             rect = pygame.Rect(x*d, y*d, d, d)
             self._screen.blit(icon, rect)
         pygame.display.flip()
+
+    def game_over(self):
+        '''
+        (Stage) -> bool
+        Return whether the game is over or not.
+        '''
+        
+        if self._player != None or self._player2 != None:
+
+            for a in self._actors:
+                if isinstance(a, Monster) and not isinstance(a, KingMonster):
+                    return False
+            self._winner = True
+            return True
+        return True
+
+    def winner(self):
+        '''
+        (Stage) -> bool
+        Return whether the player(s) have won.
+        '''
+        return self._winner
 
 class Monster(Actor):
     '''A Monster class.'''
