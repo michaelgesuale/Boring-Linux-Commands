@@ -303,7 +303,10 @@ class Box(Actor):
         return False
 
 # COMPLETE THIS CLASS FOR PART 2 OF LAB
-class Wall(Box): 
+class Wall(Box):
+    '''
+    A wall is an immovable actor. Can be used to trap monsters as well.
+    '''
 
     def move(self, other, dx, dy):
         return False
@@ -599,12 +602,19 @@ class Monster(Actor):
         return True
     
 class KingMonster(Monster):
-
+    '''
+    KingMonster is a Monster that cannot die.
+    '''
+    
     def is_dead(self):
         pass
 
 class ExplosiveMonster(Monster):
-
+    '''
+    ExplosiveMonster is a monster that, once killed, explodes.
+    This causes the boxes around it to vanish.
+    '''
+    
     def step(self):
         '''
         Take one step in the animation (this Monster moves by one space).
@@ -638,6 +648,10 @@ class DisguisedMonster(Monster):
     pass
 
 class AddBoxesMonster(Monster):
+    '''
+    This monster is the opposite of an ExplodingMonster:
+    When it dies, it adds boxes to the stage.
+    '''
     
     def step(self):
         '''
